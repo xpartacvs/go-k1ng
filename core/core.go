@@ -7,17 +7,17 @@ import (
 	"strings"
 )
 
+// A type to group allowed HTTP method
 type ConsumeMethod string
+
+// A type to group main modules
 type Module string
 
-type core struct {
+// The main struct of the K1NG's core service
+type Core struct {
 	url  *url.URL
 	key  string
 	pass string
-}
-
-type Core interface {
-	ConsumeAPI(method ConsumeMethod, endpoint string, data url.Values) (*http.Response, error)
 }
 
 const (
@@ -36,7 +36,8 @@ const (
 	ModuleWhatsapp Module = "WA"
 )
 
-func New(hosturl, apikey, password string) (Core, error) {
+// Create a new core service from the given arguments
+func New(hosturl, apikey, password string) (*Core, error) {
 	u, err := url.Parse(hosturl)
 	if err != nil {
 		return nil, err
@@ -46,18 +47,19 @@ func New(hosturl, apikey, password string) (Core, error) {
 	u.RawFragment = ""
 	u.Fragment = ""
 
-	return &core{
+	return &Core{
 		url:  u,
 		key:  apikey,
 		pass: password,
 	}, nil
 }
 
-func (c core) baseUrl() string {
+func (c Core) baseUrl() string {
 	return strings.TrimRight(c.url.String(), "/?#")
 }
 
-func (c core) ConsumeAPI(method ConsumeMethod, endpoint string, data url.Values) (*http.Response, error) {
+// Consume API according to the given arguments
+func (c Core) ConsumeAPI(method ConsumeMethod, endpoint string, data url.Values) (*http.Response, error) {
 	urlPath := c.baseUrl() + "/" + endpoint
 	data.Add("api_key", c.key)
 	data.Add("api_pass", c.pass)

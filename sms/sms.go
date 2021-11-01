@@ -18,7 +18,7 @@ type Channel string
 
 // A main struct of SMS client where you can configure and send SMS.
 type Sms struct {
-	core         core.Core
+	core         *core.Core
 	module       core.Module
 	channel      Channel
 	destinations []string
